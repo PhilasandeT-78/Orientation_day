@@ -146,31 +146,81 @@ elif menu == "Career Paths":
             st.markdown(f"**Common Tools:** {career['tools']}")
 
 elif menu == "Statistics Game":
+    import random
+    import statistics
+    import matplotlib.pyplot as plt
+
     st.title("🎯 Guess the Average")
-    st.write("Can you estimate the **mean, median, and mode**?")
+    st.write("Estimate the **mean** and **median**, then explore the data visually.")
 
-    data = [52, 55, 60, 61, 65, 70, 72, 75, 80, 95]
-    st.markdown(f"### Dataset (Test Marks):\n{data}")
+    # -----------------------------
+    # RANDOM DATASET GENERATOR
+    # -----------------------------
+    if "data" not in st.session_state:
+        st.session_state.data = []
 
-    mean_guess = st.number_input("Your guess for the MEAN", 0.0, 100.0)
-    median_guess = st.number_input("Your guess for the MEDIAN", 0.0, 100.0)
-    mode_guess = st.number_input("Your guess for the MODE", 0.0, 100.0)
+    if st.button("🎲 Generate New Dataset"):
+        st.session_state.data = sorted(
+            [random.randint(40, 95) for _ in range(12)]
+        )
 
-    if st.button("Check Answers"):
-        import statistics
+    if st.session_state.data:
+        data = st.session_state.data
 
-        mean_actual = statistics.mean(data)
-        median_actual = statistics.median(data)
-        mode_actual = statistics.mode(data)
+        st.markdown("### 📊 Dataset (Test Marks)")
+        st.write(data)
 
-        st.success(f"✅ Mean: {mean_actual}")
-        st.success(f"✅ Median: {median_actual}")
-        st.success(f"✅ Mode: {mode_actual}")
+        # -----------------------------
+        # USER GUESSES
+        # -----------------------------
+        mean_guess = st.number_input(
+            "Your guess for the MEAN",
+            min_value=0.0,
+            max_value=100.0,
+            step=0.5
+        )
 
-        st.info("""
-        📌 **Key Insight:**
-        - The **mean** is affected by extreme values.
-        - The **median** is more robust.
-        - The **mode** shows the most common value.
-        """)
+        median_guess = st.number_input(
+            "Your guess for the MEDIAN",
+            min_value=0.0,
+            max_value=100.0,
+            step=0.5
+        )
+
+        if st.button("✅ Check Answers"):
+            mean_actual = statistics.mean(data)
+            median_actual = statistics.median(data)
+
+            st.success(f"Correct Mean: {mean_actual:.2f}")
+            st.success(f"Correct Median: {median_actual:.2f}")
+
+            # -----------------------------
+            # HISTOGRAM
+            # -----------------------------
+            fig, ax = plt.subplots()
+            ax.hist(data, bins=6)
+            ax.axvline(mean_actual, linestyle="--", label="Mean")
+            ax.axvline(median_actual, linestyle=":", label="Median")
+            ax.set_title("Distribution of Test Marks")
+            ax.set_xlabel("Marks")
+            ax.set_ylabel("Frequency")
+            ax.legend()
+
+            st.pyplot(fig)
+
+            # -----------------------------
+            # LEARNING INSIGHT
+            # -----------------------------
+            st.info("""
+            📌 **Statistical Insight**
+            - The **mean** is sensitive to extreme values.
+            - The **median** represents the middle of the data.
+            - The histogram shows whether the data is symmetric or skewed.
+            """)
+
+    else:
+        st.warning("Click 🎲 **Generate New Dataset** to start the game.")
+
+  
+
   
