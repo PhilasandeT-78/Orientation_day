@@ -14,7 +14,7 @@ st.set_page_config(
 st.sidebar.title("🎓 Mathematical Sciences")
 menu = st.sidebar.radio(
     "Navigate",
-    ["Welcome", "Motivational Message", "Career Paths", "Statistics Game"]
+    ["Welcome", "Motivational Message", "Career Paths", "Statistics Game","Probability Game 🎲"]
 )
 
 
@@ -221,6 +221,82 @@ elif menu == "Statistics Game":
     else:
         st.warning("Click 🎲 **Generate New Dataset** to start the game.")
 
+
+
+
+elif menu == "Probability Game 🎲":
+    import random
+    import matplotlib.pyplot as plt
+
+    st.title("🎲 Coin & Dice Probability Simulator")
+
+    game_type = st.radio(
+        "Choose a simulation:",
+        ["Coin Toss", "Dice Roll"]
+    )
+
+    trials = st.slider("Number of simulations:", 10, 5000, 100)
+
+    if st.button("Run Simulation"):
+        
+        # -----------------------------------
+        # COIN TOSS
+        # -----------------------------------
+        if game_type == "Coin Toss":
+            results = [random.choice(["Heads", "Tails"]) for _ in range(trials)]
+            heads_count = results.count("Heads")
+            tails_count = results.count("Tails")
+
+            st.subheader("Results")
+            st.write(f"Heads: {heads_count}")
+            st.write(f"Tails: {tails_count}")
+
+            experimental_prob = heads_count / trials
+            st.success(f"Experimental P(Heads) = {experimental_prob:.4f}")
+            st.info("Theoretical P(Heads) = 0.5")
+
+            # Plot
+            fig, ax = plt.subplots()
+            ax.bar(["Heads", "Tails"], [heads_count, tails_count])
+            ax.set_title("Coin Toss Outcomes")
+            ax.set_ylabel("Frequency")
+            st.pyplot(fig)
+
+        # -----------------------------------
+        # DICE ROLL
+        # -----------------------------------
+        else:
+            results = [random.randint(1, 6) for _ in range(trials)]
+            counts = [results.count(i) for i in range(1, 7)]
+
+            st.subheader("Results")
+            for i in range(6):
+                st.write(f"Face {i+1}: {counts[i]}")
+
+            experimental_prob = counts[0] / trials
+            st.success(f"Experimental P(1) = {experimental_prob:.4f}")
+            st.info("Theoretical P(1) = 1/6 ≈ 0.1667")
+
+            # Plot
+            fig, ax = plt.subplots()
+            ax.bar(range(1, 7), counts)
+            ax.set_title("Dice Roll Outcomes")
+            ax.set_xlabel("Dice Face")
+            ax.set_ylabel("Frequency")
+            st.pyplot(fig)
+
+        # -----------------------------------
+        # LEARNING INSIGHT
+        # -----------------------------------
+        st.markdown("---")
+        st.info("""
+        📌 **Law of Large Numbers**
+        As the number of simulations increases,
+        the experimental probability approaches the theoretical probability.
+        Try increasing the number of simulations and observe what happens!
+        """)
+
   
 
   
+
